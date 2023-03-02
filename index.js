@@ -10,7 +10,7 @@ var cors = require("cors");
 app.use(cors());
 
 //importo el MOCK
-const MOCK = require("./mocks/mocks");
+// const MOCK = require("./mocks/mocks");
 // Seteo en una constante el puerto
 const PORT = process.env.PORT || 8000;
 //Mongoose
@@ -28,21 +28,10 @@ const dbConnection = async () => {
 };
 
 const productsRoutes = require("./routes/products");
-
+const usersRoutes = require("./routes/users");
 // Programo endopints
 app.use("/products", productsRoutes);
-// Endpoints con route
-app
-  .route("/test")
-  .get((req, res) => {
-    console.log("GET /products");
-    const allProducts = MOCK;
-    res.status(200).json(allProducts);
-  })
-  .post((req, res) => {
-    res.json("👌");
-    console.log(req.body);
-  });
+app.use("/users", usersRoutes);
 
 // Funcion que corre la API, si no está no se autoejecuta
 app.listen(PORT, () => {

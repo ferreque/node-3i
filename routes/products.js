@@ -1,5 +1,4 @@
 const router = require("express").Router();
-const { findByIdAndUpdate } = require("../models/Product");
 const Product = require("../models/Product");
 
 router
