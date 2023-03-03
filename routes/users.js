@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const User = require("../models/user.js");
+const bcrypt = require("bcrypt");
 
 router
   .get("/all", async (req, res) => {
@@ -12,21 +13,45 @@ router
       res.status(400).json(error);
     }
   })
-  .get("/:id", async (req, res) => {
-    const { id } = req.params;
-    console.log("GET /user" + id);
+  .post("/login", async (req, res) => {
+    const body = req.body;
+    console.log(body.password);
+
     try {
-      const user = await User.findById(id);
-      res.status(200).send(user);
+      const user = await User.findOne({ mail: body.mail });
+      console.log(user.password);
+      const decryptedPassword = await bcrypt.compare(
+        body.password,
+        user.password
+      );
+      if (decryptedPassword) {
+        return res.status(200).send(user);
+      }
     } catch (error) {
-      res.status(404).json(error);
+      res.status(404).json({ error: error, message: "error login" });
     }
   })
-  .post("/new", async (req, res) => {
+  .post("/register", async (req, res) => {
     const { body } = req;
-    console.log("POST /user/new");
+    const userExists = await User.findOne({ mail: body.mail });
+    if (userExists) {
+      return res
+        .status(400)
+        .json({ error: true, message: "Mail already exist" });
+    }
+    const salt = await bcrypt.genSalt(6);
+    const encryptedPassword = await bcrypt.hash(body.password, salt);
+
     try {
-      const newUser = new User(body);
+      const newUser = new User({
+        name: body.name,
+        mail: body.mail,
+        salt: salt,
+        password: encryptedPassword,
+      });
+      if (body.name === "admin") {
+        return res.status(400).json({ message: "Admin are only one ;)" });
+      }
       await newUser.save();
       res.status(200).json(newUser);
       console.log("ADD id " + newUser._id);
@@ -50,9 +75,15 @@ router
   })
   .delete("/:id", async (req, res) => {
     const { id } = req.params;
+
     console.log("Delete /user" + id);
     try {
       const deleteUser = await User.findByIdAndDelete(id);
+      if (deleteUser.name === "admin") {
+        return res
+          .status(400)
+          .json({ message: "Admin no puede ser eliminado" });
+      }
       res.status(200).json(deleteUser);
       console.log("User Deleted " + deleteUser);
     } catch (error) {
