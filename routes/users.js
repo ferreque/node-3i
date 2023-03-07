@@ -50,9 +50,9 @@ router
         salt: salt,
         password: encryptedPassword,
       });
-      if (body.name === "admin") {
-        return res.status(400).json({ message: "Admin are only one ;)" });
-      }
+      // if (body.name === "admin") {
+      //   return res.status(400).json({ message: "Admin are only one ;)" });
+      // }
       await newUser.save();
       res.status(200).json(newUser);
       console.log("ADD id " + newUser._id);
