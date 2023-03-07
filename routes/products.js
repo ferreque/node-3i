@@ -18,6 +18,7 @@ router
     try {
       const product = await Product.findById(id);
       res.status(200).send(product);
+      console.log(product);
     } catch (error) {
       res.status(404).json(error);
     }
