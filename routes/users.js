@@ -3,16 +3,16 @@ const User = require("../models/user.js");
 const bcrypt = require("bcryptjs");
 
 router
-  // .get("/all", async (req, res) => {
-  //   console.log("GET /users/all");
-  //   try {
-  //     const allUsers = await User.find();
-  //     console.log(allUsers);
-  //     res.status(200).send({ allUsers });
-  //   } catch (error) {
-  //     res.status(400).json(error);
-  //   }
-  // })
+  .get("/all", async (req, res) => {
+    console.log("GET /users/all");
+    try {
+      const allUsers = await User.find();
+      console.log(allUsers);
+      res.status(200).send({ allUsers });
+    } catch (error) {
+      res.status(400).json(error);
+    }
+  })
   .post("/login", async (req, res) => {
     const body = req.body;
 
