@@ -15,20 +15,21 @@ router
   // })
   .post("/login", async (req, res) => {
     const body = req.body;
-    console.log(body.password);
 
     try {
       const user = await User.findOne({ mail: body.mail });
-      console.log(user.password);
+
       const decryptedPassword = await bcrypt.compare(
         body.password,
         user.password
       );
-      if (decryptedPassword) {
-        return res.status(200).send(user);
+      if (user && decryptedPassword) {
+        return res
+          .status(200)
+          .json({ error: null, message: "User and pass OK" });
       }
     } catch (error) {
-      res.status(404).json({ error: error, message: "error login" });
+      res.status(404).json({ error: true, message: "Credentians are WRONG" });
     }
   })
   .post("/register", async (req, res) => {
@@ -47,7 +48,6 @@ router
         name: body.name,
         mail: body.mail,
         rol: body.rol,
-        salt: salt,
         password: encryptedPassword,
       });
       if (body.name === "admin") {
@@ -57,7 +57,9 @@ router
       res.status(200).json(newUser);
       console.log("ADD id " + newUser._id);
     } catch (error) {
-      res.status(404).json(error);
+      res
+        .status(404)
+        .json({ error: error, message: "error linea 60 users back" });
     }
   })
   .put("/:id", async (req, res) => {
