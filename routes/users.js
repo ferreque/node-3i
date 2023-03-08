@@ -48,6 +48,7 @@ router
         name: body.name,
         mail: body.mail,
         rol: body.rol,
+        salt: salt,
         password: encryptedPassword,
       });
       if (body.name === "admin") {
@@ -57,9 +58,7 @@ router
       res.status(200).json(newUser);
       console.log("ADD id " + newUser._id);
     } catch (error) {
-      res
-        .status(404)
-        .json({ error: error, message: "error linea 60 users back" });
+      res.status(404).json(error);
     }
   })
   .put("/:id", async (req, res) => {
