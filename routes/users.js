@@ -26,7 +26,7 @@ router
       if (user && decryptedPassword) {
         return res
           .status(200)
-          .json({ error: null, message: "User and pass OK" });
+          .json({ error: null, message: "User and pass OK", rol: user.rol });
       }
     } catch (error) {
       res.status(404).json({ error: true, message: "Credentians are WRONG" });
